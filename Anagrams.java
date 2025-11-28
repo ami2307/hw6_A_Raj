@@ -9,8 +9,8 @@ import java.util.Map;
 public class Anagrams {
 
     final Integer[] primes = {
-        2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41,
-        43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101
+            2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41,
+            43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101
     };
 
     Map<Character, Integer> letterTable;
@@ -30,16 +30,15 @@ public class Anagrams {
     }
 
     private Long myHashCode(String s) {
-        if (s == null || s.isEmpty())
-            throw new IllegalArgumentException("String cannot be null or empty");
+        if (s.isEmpty()) {
+            throw new IllegalArgumentException("String cannot be empty");
+        }
 
-        long hash = 1;
-        s = s.toLowerCase();
-        for (char c : s.toCharArray()) {
-            Integer p = letterTable.get(c);
-            if (p != null) {
-                hash *= p;
-            }
+        long hash = 1L;
+
+        for (int i = 0; i < s.length(); i++) {
+            char c = Character.toLowerCase(s.charAt(i));
+            hash *= letterTable.get(c);
         }
 
         return hash;
@@ -58,7 +57,7 @@ public class Anagrams {
         }
         list.add(s);
     }
-  
+
     private void processFile(String filename) throws IOException {
         BufferedReader br = new BufferedReader(
                 new InputStreamReader(new FileInputStream(filename)));
@@ -83,9 +82,9 @@ public class Anagrams {
 
             if (size > maxSize) {
                 result.clear();
-                result.add(entry);
                 maxSize = size;
-            } else if (size == maxSize) {
+                result.add(entry);
+            } else if (size == maxSize && size > 1) {
                 result.add(entry);
             }
         }
@@ -94,27 +93,27 @@ public class Anagrams {
     }
 
     public static void main(String[] args) {
-        Anagrams ana = new Anagrams();
+        Anagrams a = new Anagrams();
 
         long start = System.nanoTime();
 
         try {
-            ana.processFile("words_alpha.txt");
+            a.processFile("words_alpha.txt");
         } catch (IOException e) {
             e.printStackTrace();
             return;
         }
 
-        ArrayList<Map.Entry<Long, ArrayList<String>>> max = ana.getMaxEntries();
-        long elapsed = System.nanoTime() - start;
+        ArrayList<Map.Entry<Long, ArrayList<String>>> max = a.getMaxEntries();
+        long end = System.nanoTime();
 
-        System.out.println("Elapsed time: " + (elapsed / 1e9) + " seconds");
+        double seconds = (end - start) / 1_000_000_000.0;
+        System.out.println("Elapsed Time : " + seconds);
 
         for (Map.Entry<Long, ArrayList<String>> entry : max) {
-            System.out.println("Key: " + entry.getKey());
-            System.out.println("Anagrams: " + entry.getValue());
-            System.out.println("Count: " + entry.getValue().size());
-            System.out.println();
+            System.out.println("Key of max anagrams : " + entry.getKey());
+            System.out.println("List of max anagrams : " + entry.getValue());
+            System.out.println("Length of list of max anagrams : " + entry.getValue().size());
         }
     }
 }
